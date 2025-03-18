@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
@@ -31,9 +31,12 @@ jobs:
         run: |
           npm ci
           npm run build
+          ls -la dist  # Check if dist exists
 
       - name: Tar the build directory
-        run: tar -cvf pages.tar "./packages/editor-sample/dist"
+        run: |
+          tar -cvf pages.tar "./packages/editor-sample/dist"
+          ls -la pages.tar  # Check if pages.tar was created
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
