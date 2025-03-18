@@ -15,31 +15,33 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: Ubuntu latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions checkout@v4
 
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions setup-node@v3
         with:
           node-version: 20
           cache: 'npm'
 
       - name: Install dependencies and build
-        working-directory: './packages/editor-sample'
+        working-directory: './packages editor-sample'
         run: |
           npm ci
           npm run build
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
+      - name: Tar the build directory
+        run: tar -cvf pages.tar "./packages editor-sample/dist"
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions upload-artifact@v4
         with:
-          path: './packages/editor-sample/dist'
+          name: github-pages
+          path: pages.tar
+          retention-days: 1
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions deploy-pages@v2
