@@ -15,28 +15,28 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: Ubuntu latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions checkout@v4
+        uses: actions/checkout@v4
 
       - name: Set up Node
-        uses: actions setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: 'npm'
 
       - name: Install dependencies and build
-        working-directory: './packages editor-sample'
+        working-directory: './packages/editor-sample'
         run: |
           npm ci
           npm run build
 
       - name: Tar the build directory
-        run: tar -cvf pages.tar "./packages editor-sample/dist"
+        run: tar -cvf pages.tar "./packages/editor-sample/dist"
 
       - name: Upload artifact
-        uses: actions upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: github-pages
           path: pages.tar
@@ -44,4 +44,4 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions deploy-pages@v2
+        uses: actions/deploy-pages@v2
