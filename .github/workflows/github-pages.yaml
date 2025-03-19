@@ -18,9 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5 # Cập nhật từ v4 lên v5
+        uses: actions/checkout@v4
       - name: Set up Node
-        uses: actions/setup-node@v4 # Cập nhật từ v3 lên v4
+        uses: actions/setup-node@v4  # Cập nhật lên v4
         with:
           node-version: 20
           cache: 'npm'
@@ -30,11 +30,11 @@ jobs:
           npm ci
           npm run build
       - name: Setup Pages
-        uses: actions/configure-pages@v4 # Cập nhật từ v3 lên v4
+        uses: actions/configure-pages@v5  # Cập nhật lên v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3 # Cập nhật từ v2 lên v3
+        uses: actions/upload-pages-artifact@v3  # Cập nhật lên v3
         with:
           path: './packages/editor-sample/dist'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3 # Cập nhật từ v2 lên v3
+        uses: actions/deploy-pages@v4  # Cập nhật lên v4
