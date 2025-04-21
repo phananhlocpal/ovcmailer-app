@@ -29,21 +29,20 @@ const SignIn = () => {
    * @description Handle Google Sign In
    */ 
   const handleGoogleSignIn = async () => {
-    
     try {
       const result = await signInWithPopup(auth, provider);
-      const email = result.user.email;
-
-      if (email && await loginWithGoogle(email)) {
-        // Redirect home
-
+      const idToken = await result.user.getIdToken();
+  
+      const res = await loginWithGoogle(idToken);
+  
+      if (res.data.success) {
+        window.location.href = "/home"; 
       } else {
-        await signOut(auth);
-        setError("The account is not allowed to sign in!");
+        throw new Error("Server từ chối đăng nhập");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Sign-in failed!");
+      setError("Đăng nhập không thành công. Vui lòng thử lại.");
     }
   };
 

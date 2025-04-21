@@ -1,0 +1,78 @@
+<div id="collapse-Pause" class="accordion-collapse collapse show">
+  <div class="accordion-body ct-box-shadow-none pb-0" id="tag-body-Pause">
+    <div class="Pause">
+      <div class="pt-3">
+        <div class="block_title mb-1 p-1">
+          <img src="~/sr/content/images/icon/ic-common-info-active.svg" alt="" width="23" height="23">
+          Thông tin xử lý
+        </div>
+        <form id="ProcessInfoForm">
+          <div class="row g-2 mb-2 justify-content-between">
+            <div class="col-4">
+              <div class="floating-form">
+                <select class="form-select form-select-lg" onchange="this.setAttribute('value', this.value);" value="" id="ddlContactResult" name="ddlContactResult" required>
+                </select>
+                <label>Kết quả liên lạc *</label>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="floating-form">
+                <input type="text" class="form-control" id="inputContactPhoneNumber" name="inputContactPhoneNumber" />
+                <label>Số điện thoại liên lạc *</label>
+              </div>
+            </div>
+
+            <div class="col-4">
+              <div class="floating-form">
+                <select class="form-select form-select-lg" onchange="this.setAttribute('value', this.value);" value="" id="ddlContactSource" name="ddlContactSource" required>
+                </select>
+                <label>Công cụ liên lạc *</label>
+              </div>
+            </div>
+
+            <div class="col-4">
+              <div class="floating-form">
+                <select class="form-select form-select-lg" onchange="this.setAttribute('value', this.value);" value="" id="ddlConsultingResult" name="ddlConsultingResult" required>
+                </select>
+                <label>Kết quả tư vấn *</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-2 justify-content-between">
+            <div class="col-3">
+              <div class="floating-form">
+                <select class="form-select form-select-lg" onchange="this.setAttribute('value', this.value);" value="" id="ddlProcessStatus" name="ddlProcessStatus">
+                </select>
+                <label>Tình trạng xử lý</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-2 justify-content-between">
+            <div class="row g-2 mb-2">
+              <div class="col-12">
+                <div class="floating-form">
+                  <textarea class="form-control h-25" rows="3" style="resize: none" id="inputProcessDescription" name="inputProcessDescription" required></textarea>
+                  <label>Nội dung xử lý *</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-2 justify-content-between">
+            <div class="row g-2 mb-2">
+              <div class="col-12">
+                <div class="floating-form">
+                  <textarea class="form-control h-25" rows="3" style="resize: none" id="inputProcessDescription" name="inputProcessDescription" required></textarea>
+                  <label>File đính kèm</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

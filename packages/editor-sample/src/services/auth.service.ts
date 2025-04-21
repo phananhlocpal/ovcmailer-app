@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const API_URL = "http://localhost:5000/api/auth"; 
+const API_URL = "http://localhost:5000/api/auth";
 
 /**
  * Đăng ký tài khoản mới
@@ -31,13 +31,13 @@ export const login = async (studentId: string, password: string) => {
 /**
  * Đăng nhập bằng Google
  */
-export const loginWithGoogle = async (email: string) => {
-  const response = await axios.post(`${API_URL}/login-google`, { email });
-  if (response.data.accessToken) {
-    Cookies.set("accessToken", response.data.accessToken, { secure: true, sameSite: "Strict" });
-    Cookies.set("refreshToken", response.data.refreshToken, { secure: true, sameSite: "Strict" });
-  }
-  return response.data.result;
+export const loginWithGoogle = async (idToken: string) => {
+  const res = await axios.post(
+    `${API_URL}/auth/google`,
+    { idToken },
+    { withCredentials: true } 
+  );
+  return res;
 };
 
 /**
@@ -52,7 +52,7 @@ export const refreshAccessToken = async () => {
     Cookies.set("accessToken", response.data.accessToken, { secure: true, sameSite: "Strict" });
     return response.data.accessToken;
   } catch (error) {
-    logout(); // Token không hợp lệ, đăng xuất
+    logout(); 
     return null;
   }
 };
@@ -61,19 +61,11 @@ export const refreshAccessToken = async () => {
  * Lấy thông tin người dùng
  */
 export const getUserInfo = async (): Promise<any> => {
-  const accessToken = Cookies.get("accessToken");
-  if (!accessToken) return null;
-
   try {
-    const response = await axios.get(`${API_URL}/me`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      const newToken = await refreshAccessToken();
-      if (newToken) return getUserInfo();
-    }
+    const res = await axios.get(`${API_URL}/me`, { withCredentials: true });
+    return res.data.user;
+  } catch (err) {
+    console.error("Không thể lấy thông tin người dùng");
     return null;
   }
 };
@@ -82,10 +74,15 @@ export const getUserInfo = async (): Promise<any> => {
  * Đăng xuất (Xóa token)
  */
 export const logout = async () => {
-  const refreshToken = Cookies.get("refreshToken");
-  if (refreshToken) {
-    await axios.post(`${API_URL}/logout`, { refreshToken });
+  try {
+    const res = await axios.post(
+      `${API_URL}/logout`,
+      {},
+      { withCredentials: true } // để xoá cookie phía server
+    );
+    return res.data.success;
+  } catch (err) {
+    console.error("Đăng xuất thất bại:", err);
+    return false;
   }
-  Cookies.remove("accessToken");
-  Cookies.remove("refreshToken");
 };
