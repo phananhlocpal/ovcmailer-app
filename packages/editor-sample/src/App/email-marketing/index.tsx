@@ -24,7 +24,7 @@ export default function EmailMarketing() {
   const marginRightTransition = useDrawerTransition('margin-right', inspectorDrawerOpen);
 
   return (
-    <>
+    <div>
       <InspectorDrawer />
       <SamplesDrawer />
 
@@ -37,6 +37,6 @@ export default function EmailMarketing() {
       >
         <TemplatePanel />
       </Stack>
-    </>
+    </div>
   );
 }

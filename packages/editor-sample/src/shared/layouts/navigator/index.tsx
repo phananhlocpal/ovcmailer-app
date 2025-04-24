@@ -18,6 +18,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { Logout, Person } from '@mui/icons-material';
 import { Outlet } from 'react-router-dom';
+import { Send } from '@mui/icons-material';
 
 // Styled components
 const StyledAppBar = styled(AppBar)<AppBarProps>(() => ({
@@ -26,19 +27,26 @@ const StyledAppBar = styled(AppBar)<AppBarProps>(() => ({
 }));
 
 const LogoTypography = styled(Typography)(() => ({
-  fontWeight: 'bold',
-  fontSize: '1.5rem',
+  textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
   flexGrow: 1,
-  color: 'black',
 }));
 
-const NavButton = styled(Button)(({ theme }) => ({
-  color: '#fff',
+
+const HighlightButton = styled(Button)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: 'white',
   marginRight: theme.spacing(2),
   textTransform: 'none',
   '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: theme.palette.primary.dark,
   },
+}));
+
+
+const NavButton = styled(Button)(({ theme }) => ({
+  color: 'black',
+  marginRight: theme.spacing(2),
+  textTransform: 'none'
 }));
 
 export const Navigator: React.FC = () => {
@@ -61,13 +69,39 @@ export const Navigator: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Navbar */}
-      <StyledAppBar position="static">
+      <StyledAppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
-          <LogoTypography variant="h6">OVCMailer</LogoTypography>
+          <LogoTypography variant="h6">
+            <span style={{
+              fontFamily: "'Baloo 2', cursive",
+              fontWeight: 700,
+              color: '#43a047', // xanh lá – thiện nguyện, năng lượng
+              fontSize: '2rem',
+            }}>
+              OVC
+            </span>
+            <span style={{
+              fontFamily: "'Poppins', sans-serif",
+              fontWeight: 200,
+              color: '#1e88e5', // xanh dương – công nghệ, tin cậy
+              marginLeft: '2px',
+              fontSize: '1.4rem',
+            }}>
+              Mailer
+            </span>
+          </LogoTypography>
 
-          <NavButton>Users</NavButton>
-          <NavButton>Approved Emails</NavButton>
+          {/* Nút nổi bật Send Email */}
+          <HighlightButton
+            variant="contained"
+            startIcon={<Send />}
+          >
+            Send Email
+          </HighlightButton>
           <NavButton>Email Editor</NavButton>
+          <NavButton>Users</NavButton>
+          <NavButton>My template</NavButton>
+          <NavButton>My Emails</NavButton>
 
           <IconButton
             edge="end"
@@ -77,7 +111,6 @@ export const Navigator: React.FC = () => {
           >
             <Avatar
               alt="User Avatar"
-              src="/path-to-avatar.jpg"
               sx={{ width: 32, height: 32 }}
             />
           </IconButton>
@@ -127,6 +160,8 @@ export const Navigator: React.FC = () => {
           </Menu>
         </Toolbar>
       </StyledAppBar>
+
+      <Toolbar />
 
       {/* Nội dung route con */}
       <div style={{ width: '100vw' }} className="">

@@ -109,7 +109,8 @@ export default function TemplatePanel() {
                 </Tooltip>
               </ToggleButton>
             </ToggleButtonGroup>
-            <ShareButton />
+            {/* <ShareButton /> */}
+            
           </Stack>
         </Stack>
         <ToggleInspectorPanelButton />

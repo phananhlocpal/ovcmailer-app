@@ -38,156 +38,18 @@ const API_URL = 'http://localhost:3000/api/users';
 
 interface User {
   id?: number;
-  user_code: string;
-  student_id: string;
-  full_name: string;
-  email_hcmut: string;
-  email_individual: string;
-  phone_number: string;
-  status: 'active' | 'inactive';
+  name: string;
+  type: string;
+  status: string;
 }
 
 const csvTemplateHeaders = [
-  'user_code',
-  'student_id',
-  'full_name',
-  'email_hcmut',
-  'email_individual',
-  'phone_number',
-  'status',
+  'name',
+  'type',
+  'status'
 ];
 
-const downloadCsvTemplate = () => {
-  const csvContent = csvTemplateHeaders.join(',') + '\n';
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', 'user_template.csv');
-  link.click();
-};
-
-const validateCsv = (file: File, callback: (isValid: boolean, data: User[]) => void) => {
-  Papa.parse(file, {
-    complete: (result: Papa.ParseResult<User>) => {
-      const headers = result.data[0] ? Object.keys(result.data[0]) : [];
-      const isValid = csvTemplateHeaders.every((header) => headers.includes(header));
-
-      if (!isValid) {
-        callback(false, []);
-        return;
-      }
-
-      const hasValidData = result.data.every((row) =>
-        row.full_name && row.full_name.trim() !== '' &&
-        row.email_hcmut && row.email_hcmut.trim() !== ''
-      );
-
-      if (!hasValidData) {
-        callback(false, []);
-        toast.error('CSV contains rows with missing or empty full_name or email_hcmut.', {
-          position: 'bottom-right',
-        });
-        return;
-      }
-
-      callback(true, result.data);
-    },
-    header: true,
-    skipEmptyLines: true,
-  });
-};
-
-interface UserFormProps {
-  user?: User;
-  onSave: (user: User) => void;
-  onCancel: () => void;
-}
-
-const UserForm: React.FC<UserFormProps> = ({ user, onSave, onCancel }) => {
-  const [formData, setFormData] = useState<User>(
-    user || {
-      user_code: '',
-      student_id: '',
-      full_name: '',
-      email_hcmut: '',
-      email_individual: '',
-      phone_number: '',
-      status: 'active',
-    }
-  );
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | React.ChangeEvent<{ name?: string; value: unknown }> | SelectChangeEvent<"active" | "inactive">
-  ) => {
-    const { name, value } = e.target as { name?: string; value: unknown };
-    if (name) {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
-
-  const editableFields = ['full_name', 'email_individual', 'phone_number', 'status'];
-
-  return (
-    <motion.div
-      initial={{ x: '100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '100%' }}
-      transition={{ type: 'spring', stiffness: 80, damping: 20 }}
-      className="w-1/3 bg-white p-6 shadow-lg border-l"
-    >
-      <Typography variant="h6" gutterBottom>
-        {user ? 'Edit User' : 'Add User'}
-      </Typography>
-      <form onSubmit={handleSubmit}>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {csvTemplateHeaders.map((field) =>
-            field !== 'status' ? (
-              <TextField
-                key={field}
-                label={field.replace('_', ' ').toUpperCase()}
-                name={field}
-                value={formData[field as keyof User]}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-                required={editableFields.includes(field) || !user}
-                disabled={user && !editableFields.includes(field)}
-              />
-            ) : null
-          )}
-          <FormControl fullWidth>
-            <InputLabel>Status</InputLabel>
-            <Select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              label="Status"
-            >
-              <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="inactive">Inactive</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-          <Button variant="outlined" onClick={onCancel}>
-            Cancel
-          </Button>
-          <Button variant="contained" type="submit">
-            Save
-          </Button>
-        </Box>
-      </form>
-    </motion.div>
-  );
-};
-
-const UserList: React.FC = () => {
+const MyTemplate: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [orderBy, setOrderBy] = useState<keyof User | ''>('');
@@ -214,12 +76,8 @@ const UserList: React.FC = () => {
       return [
         {
           id: 1,
-          user_code: 'locpa',
-          student_id: '1952827',
-          full_name: 'Phan Anh Loc',
-          email_hcmut: 'loc.phan.pal@hcmut.edu.vn',
-          email_individual: 'anhloc280@gmail.com',
-          phone_number: '0345654280',
+          name: 'Welcome new member',
+          type: 'public',
           status: 'active',
         },
       ];
@@ -243,7 +101,7 @@ const UserList: React.FC = () => {
   }) : [];
 
   const filteredUsers = sortedUsers.filter((user) =>
-    user.full_name.toLowerCase().includes(searchTerm.toLowerCase())
+    user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const paginatedUsers = filteredUsers.slice(
@@ -369,20 +227,7 @@ const UserList: React.FC = () => {
     setSelectedUserId(null);
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      validateCsv(file, (isValid, data) => {
-        if (isValid) {
-          bulkCreateMutation.mutate(data);
-        } else {
-          toast.error('Invalid CSV format. Please use the provided template.', {
-            position: 'bottom-right',
-          });
-        }
-      });
-    }
-  };
+
 
   if (isLoading) return <Box sx={{ textAlign: 'center', py: 10 }}>Loading...</Box>;
 
@@ -391,28 +236,6 @@ const UserList: React.FC = () => {
       <Box sx={{ flex: 1, p: 3, overflow: 'auto', width: showForm ? '70%' : '100%' }}>
         <Box sx={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between', mb: 1, }}>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'end' }}>
-            <Button
-              variant="contained"
-              startIcon={<Download />}
-              onClick={downloadCsvTemplate}
-              color="success"
-            >
-              CSV Template
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<Upload />}
-              component="label"
-              color="info"
-            >
-              Upload CSV
-              <input
-                type="file"
-                accept=".csv"
-                hidden
-                onChange={handleFileUpload}
-              />
-            </Button>
             <Button
               variant="contained"
               startIcon={<Add />}
@@ -426,8 +249,47 @@ const UserList: React.FC = () => {
           </Box>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'end' }}>
             <Autocomplete
+              id="type-select"
+              sx={{ width: 150, background: 'white' }}
+              options={statusOptions}
+              value={status}
+              disableClearable
+              onChange={(event, newValue) => {
+                if (newValue) {
+                  setStatus(newValue);
+                }
+              }}
+              getOptionLabel={(option) => option.label}
+              isOptionEqualToValue={(option, value) => option.value === value.value}
+              renderOption={(props, option) => (
+                <Box
+                  component="li"
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                  {...props}
+                >
+                  {option.value === 'active' ? (
+                    <CheckCircle color="success" fontSize="small" />
+                  ) : (
+                    <Cancel color="error" fontSize="small" />
+                  )}
+                  <Typography variant="body2">{option.label}</Typography>
+                </Box>
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Type"
+                  inputProps={{
+                    ...params.inputProps,
+                    autoComplete: 'new-password',
+                    readOnly: true,
+                  }}
+                />
+              )}
+            />
+            <Autocomplete
               id="status-select"
-              sx={{ width: 300, background: 'white' }}
+              sx={{ width: 150, background: 'white' }}
               options={statusOptions}
               value={status}
               disableClearable
@@ -465,7 +327,7 @@ const UserList: React.FC = () => {
               )}
             />
             <TextField
-              label="Search users"
+              label="Search template"
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -518,6 +380,13 @@ const UserList: React.FC = () => {
                           variant="outlined"
                           size="small"
                         />
+                      ) : field === 'type' ? (
+                        <Chip
+                          label={user.type}
+                          color={user.type === 'public' ? 'success' : 'error'}
+                          variant="outlined"
+                          size="small"
+                        />
                       ) : (
                         user[field as keyof User]
                       )}
@@ -545,16 +414,6 @@ const UserList: React.FC = () => {
           />
         </Box>
       </Box>
-
-      <AnimatePresence>
-        {showForm && (
-          <UserForm
-            user={editingUser || undefined}
-            onSave={handleSave}
-            onCancel={() => setShowForm(false)}
-          />
-        )}
-      </AnimatePresence>
 
       <Dialog
         open={openDeleteDialog}
@@ -597,4 +456,4 @@ const UserList: React.FC = () => {
   );
 };
 
-export default UserList;
+export default MyTemplate;
