@@ -19,6 +19,9 @@ import { styled } from '@mui/material/styles';
 import { Logout, Person } from '@mui/icons-material';
 import { Outlet } from 'react-router-dom';
 import { Send } from '@mui/icons-material';
+import Icon from '@mdi/react';
+import { mdiOwl } from '@mdi/js';
+
 
 // Styled components
 const StyledAppBar = styled(AppBar)<AppBarProps>(() => ({
@@ -71,19 +74,20 @@ export const Navigator: React.FC = () => {
       {/* Navbar */}
       <StyledAppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
-          <LogoTypography variant="h6">
+          <LogoTypography variant="h6" style={{ display: 'flex', alignItems: 'center' }}>
+            <Icon path={mdiOwl} size={1.5} color="#8D6E63"/>
             <span style={{
               fontFamily: "'Baloo 2', cursive",
               fontWeight: 700,
-              color: '#43a047', // xanh lá – thiện nguyện, năng lượng
+              color: '#795548', // nâu – VC
               fontSize: '2rem',
             }}>
-              OVC
+              VC
             </span>
             <span style={{
               fontFamily: "'Poppins', sans-serif",
               fontWeight: 200,
-              color: '#1e88e5', // xanh dương – công nghệ, tin cậy
+              color: '#757575', // xám – Mailer
               marginLeft: '2px',
               fontSize: '1.4rem',
             }}>

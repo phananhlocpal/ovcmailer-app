@@ -7,5 +7,6 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },
-  "exclude": ["dist"]
+  "exclude": ["dist"],
+  "include": ["src"]
 }
